@@ -5,10 +5,10 @@ from hibrido import SistemaHibridoMejorado
 from cache_respuesta import CacheInteligente  # ✅ AGREGADO
 from optimizador_prompts import OptimizadorPrompts  # ✅ AGREGADO
 from llama3_api import llama3_query
-from gestor_personajes import GestorPersonajes
+
 from datetime import datetime
 import json
-from plugin_manager import PluginManager
+
 from flask import Flask, request, jsonify
 
 # ------------------- AGREGADO PARA RESPUESTAS BREVES -------------------
@@ -62,8 +62,7 @@ cache = CacheInteligente(maxsize=500)
 optimizador_prompts = OptimizadorPrompts()
 # --------- FIN CACHE ---------
 
-plugin_manager = PluginManager()
-plugin_manager.cargar_plugins()
+
 
 # Memoria global de la sesión
 historial_global = []
@@ -132,21 +131,11 @@ def guardar_historial_global():
 
 def mostrar_ayuda():
     print(_("🦤 COMANDOS DISPONIBLES"))
-    print(_("- crear personaje: nombre, rol, personalidad"))
-    print(_("- eliminar personaje: nombre"))
-    print(_("- listar personajes"))
-    print(_("- personaje: nombre (activar)"))
-    print(_("- desactivar personaje (volver a modo clásico)"))
-    print(_("- exportar personaje: nombre"))
-    print(_("- exportar historial (guarda historial_global.json)"))
     print(_("- ayuda (muestra esta información)"))
     print(_("- 👍 / 👎 (evalúa la última respuesta)"))
     print(_("- stats feedback (ver estadísticas de utilidad)"))
     print(_("- explica razonamiento (explica por qué se dio la última respuesta)"))
     print(_("- entrena ml (entrena el clasificador ML con tu feedback)"))
-    print(_("- analiza imagen: ruta (describe el contenido de una imagen)"))
-    print(_("- agregar plugin: ruta.py (agrega plugin en caliente)"))
-    print(_("- quitar plugin: nombre (quita plugin en caliente)"))
     print(_("- benchmark ml (evalúa precisión del clasificador ML)"))
     print(_("- autocuración automática (activada)"))
     print(_("- memoria de largo plazo (activada)"))
@@ -154,8 +143,7 @@ def mostrar_ayuda():
     print(_("- dashboard ahorro (ver estadísticas de tokens ahorrados)"))
     print(_("- limpiar cache (limpiar cache antiguo)"))
     print(_("- stats cache (estadísticas rápidas de cache)"))
-    print(_("- iniciar historia aventura/misterio/profesional"))
-    print(_("- pausar historia | resumen historia | exportar historia"))
+    print(_("- exportar historial (guarda historial_global.json)"))
     print(_("- salir"))
 
 def calcular_stats_feedback(historial_global):
@@ -217,7 +205,6 @@ def procesar_mensaje(mensaje):
         return f"Error procesando mensaje: {e}"
 
 def main():
-    global sistema_narrativa
     
     try:
         OPENAI_API_KEY, GEMINI_API_KEY = load_api_keys()
@@ -232,17 +219,14 @@ def main():
         
         # Crear el sistema híbrido con los parámetros correctos
         sistema_hibrido = SistemaHibridoMejorado(sistema, cache, optimizador_prompts)
-        
-        gestor = GestorPersonajes()
-        personaje_activo = None
 
         print(_("🦤 DODONEST Console Test (Sesión: {})").format(id_sesion))
         mostrar_ayuda()
 
         while True:
             try:
-                modo = _("(Personaje activo: {})").format(personaje_activo.nombre) if personaje_activo else _("(Modo estándar)")
-                mensaje = input(_("\n💤 Maikeiru {}: ").format(modo))
+                # Simplified input prompt (character system removed)
+                mensaje = input(_("\n💤 Maikeiru: "))
 
                 if not mensaje.strip():
                     continue
@@ -283,41 +267,21 @@ def main():
                         print(f"Error mostrando stats: {e}")
                     continue
 
-                # --- SISTEMA DE NARRATIVA ---
-                if mensaje.lower().startswith("iniciar historia"):
-                    try:
-                        tipo = "aventura"  # por defecto
-                        if "misterio" in mensaje.lower():
-                            tipo = "misterio"
-                        elif "profesional" in mensaje.lower():
-                            tipo = "profesional"
-                        
-                        sistema_narrativa = SistemaNarrativa(gestor)
-                        sistema_narrativa.iniciar_historia(tipo)
-                    except Exception as e:
-                        print(f"Error iniciando historia: {e}")
-                    continue
+                # Narrative system removed
+                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
+                continue
 
-                if mensaje.lower().strip() == "pausar historia":
-                    if sistema_narrativa:
-                        sistema_narrativa.pausar_historia()
-                    else:
-                        print("⚠️ No hay historia activa")
-                    continue
+                # Narrative system removed
+                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
+                continue
 
-                if mensaje.lower().strip() == "resumen historia":
-                    if sistema_narrativa:
-                        sistema_narrativa.mostrar_resumen()
-                    else:
-                        print("⚠️ No hay historia activa")
-                    continue
+                # Narrative system removed
+                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
+                continue
 
-                if mensaje.lower().strip() == "exportar historia":
-                    if sistema_narrativa:
-                        sistema_narrativa.exportar_historia()
-                    else:
-                        print("⚠️ No hay historia activa")
-                    continue
+                # Narrative system removed
+                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
+                continue
 
                 # --- FEEDBACK HUMANO ---
                 if mensaje.strip() in ["👍", "👎"]:
@@ -353,7 +317,7 @@ def main():
                     print(_("🦤 Explicación razonamiento:"))
                     print(_("- Pregunta recibida: {}").format(ultima.get('mensaje')))
                     print(_("- Respuesta dada: {}").format(ultima.get('respuesta')))
-                    print(_("- Método/modelo usado: {}").format('PersonajeIA' if ultima.get('personaje_activo') else 'DODONEST sistema híbrido'))
+                    print(_("- Método/modelo usado: DODONEST sistema híbrido"))
                     print(_("- Stats: {}").format(ultima.get('stats')))
                     continue
 
@@ -384,34 +348,17 @@ def main():
                         print(_("🦤 Error en benchmark ML: {}").format(e))
                     continue
 
-                # --- ANÁLISIS DE IMAGENES ---
-                if mensaje.lower().startswith("analiza imagen:"):
-                    ruta_imagen = mensaje.split("analiza imagen:")[1].strip()
-                    try:
-                        resultado = plugin_manager.ejecutar_plugin("vision_plugin", ruta_imagen)
-                        print(_("🦤 Análisis visual:\n{}").format(resultado))
-                    except Exception as e:
-                        print(f"Error analizando imagen: {e}")
-                    continue
+                # Plugin functionality removed
+                print(_("⚠️ Análisis de imagen no disponible (plugin removido)"))
+                continue
 
-                # --- GESTIÓN DINÁMICA DE PLUGINS ---
-                if mensaje.lower().startswith("agregar plugin:"):
-                    ruta_plugin = mensaje.split("agregar plugin:")[1].strip()
-                    try:
-                        plugin_manager.agregar_plugin(ruta_plugin)
-                        print(_("🦤 Plugin agregado: {}").format(ruta_plugin))
-                    except Exception as e:
-                        print(_("⚠️ Error al agregar plugin: {}").format(e))
-                    continue
+                # Plugin functionality removed
+                print(_("⚠️ Gestión de plugins no disponible (plugin removido)"))
+                continue
 
-                if mensaje.lower().startswith("quitar plugin:"):
-                    nombre_plugin = mensaje.split("quitar plugin:")[1].strip()
-                    try:
-                        plugin_manager.quitar_plugin(nombre_plugin)
-                        print(_("🦤 Plugin quitado: {}").format(nombre_plugin))
-                    except Exception as e:
-                        print(_("⚠️ Error al quitar plugin: {}").format(e))
-                    continue
+                # Plugin functionality removed
+                print(_("⚠️ Gestión de plugins no disponible (plugin removido)"))
+                continue
 
                 if mensaje.strip().lower() in ["salir", "exit", "quit"]:
                     print(_("🦤 Saliendo de DODONEST..."))
@@ -422,111 +369,42 @@ def main():
                     mostrar_ayuda()
                     continue
 
-                if mensaje.lower().startswith("desactivar personaje"):
-                    personaje_activo = None
-                    print(_("🦤 Personaje desactivado, vuelves al modo estándar."))
-                    continue
+                # Character system removed
+                print(_("⚠️ Sistema de personajes no disponible (removido)"))
+                continue
 
-                if mensaje.lower().startswith("crear personaje:"):
-                    try:
-                        datos_raw = mensaje.split("crear personaje:", 1)[1].strip()
-                        
-                        # Si no hay comas, asumir que solo es el nombre
-                        if "," not in datos_raw:
-                            nombre = datos_raw.strip()
-                            rol = "NPC"
-                            personalidad = "amigable"
-                            descripcion = ""
-                        else:
-                            # Parsear con comas
-                            partes = [d.strip() for d in datos_raw.split(",")]
-                            nombre = partes[0] if len(partes) > 0 else "Personaje"
-                            rol = partes[1] if len(partes) > 1 else "NPC"
-                            personalidad = partes[2] if len(partes) > 2 else "amigable"
-                            descripcion = partes[3] if len(partes) > 3 else ""
-                        
-                        if not nombre:
-                            print(_("⚠️ Error: Debes especificar al menos el nombre del personaje."))
-                            print("Ejemplos:")
-                            print("crear personaje: Dr.Martinez, doctor, profesional, Médico con 20 años de experiencia")
-                            print("crear personaje: Dr.Martinez")
-                            continue
-                        
-                        ok = gestor.agregar_personaje(nombre, rol, personalidad, descripcion)
-                        if ok:
-                            print(_("🦤 Personaje '{}' creado exitosamente.").format(nombre))
-                            print(f"   Rol: {rol}")
-                            print(f"   Personalidad: {personalidad}")
-                            if descripcion:
-                                print(f"   Descripción: {descripcion}")
-                        else:
-                            print(_("⚠️ No se pudo crear el personaje. Puede que ya exista."))
-                            
-                    except Exception as e:
-                        print(_("⚠️ Error al crear personaje. Usa el formato:"))
-                        print("crear personaje: nombre, rol, personalidad, descripción")
-                        print("O simplemente: crear personaje: nombre")
-                        print(f"DEBUG: {e}")
-                    continue
+                # Character system removed
+                print(_("⚠️ Sistema de personajes no disponible (removido)"))
+                continue
 
-                if mensaje.lower().startswith("eliminar personaje:"):
-                    nombre = mensaje.split("eliminar personaje:")[1].strip()
-                    try:
-                        ok = gestor.eliminar_personaje(nombre)
-                        print(_("🦤 Personaje '{}' eliminado.").format(nombre) if ok else _("⚠️ No se pudo eliminar."))
-                    except Exception as e:
-                        print(f"Error eliminando personaje: {e}")
-                    continue
+                # Character system removed
+                print(_("⚠️ Sistema de personajes no disponible (removido)"))
+                continue
 
-                if mensaje.lower().strip() == "listar personajes":
-                    try:
-                        lista = gestor.listar_personajes()
-                        print(_("🦤 Personajes disponibles: {}").format(', '.join(lista) if lista else _("Ninguno")))
-                    except Exception as e:
-                        print(f"Error listando personajes: {e}")
-                    continue
+                # Character system removed
+                print(_("⚠️ Sistema de personajes no disponible (removido)"))
+                continue
 
-                if mensaje.lower().startswith("personaje:"):
-                    nombre = mensaje.split(":", 1)[1].strip()
-                    try:
-                        personaje = gestor.obtener_personaje(nombre)
-                        if personaje:
-                            personaje_activo = personaje
-                            print(_("🦤 Ahora conversando con el personaje: {}").format(personaje_activo.nombre))
-                        else:
-                            print(_("🦤 No existe el personaje '{}'. Usa 'listar personajes' para ver los existentes.").format(nombre))
-                    except Exception as e:
-                        print(f"Error activando personaje: {e}")
-                    continue
+                # Character system removed
+                print(_("⚠️ Sistema de personajes no disponible (removido)"))
+                continue
 
-                if mensaje.lower().startswith("resumen"):
-                    try:
-                        resultado = plugin_manager.ejecutar_plugin("resumen_plugin", historial_global)
-                        print(_("🦤 Resumen de la sesión:\n{}").format(resultado))
-                    except Exception as e:
-                        print(f"Error generando resumen: {e}")
-                    continue
+                # Plugin functionality removed
+                print(_("⚠️ Función de resumen no disponible (plugin removido)"))
+                continue
 
-                if mensaje.lower().startswith("exportar personaje:"):
-                    nombre = mensaje.split("exportar personaje:")[1].strip()
-                    try:
-                        gestor.exportar_personaje(nombre)
-                    except Exception as e:
-                        print(f"Error exportando personaje: {e}")
-                    continue
+                # Character system removed
+                print(_("⚠️ Sistema de personajes no disponible (removido)"))
+                continue
 
                 if mensaje.lower().startswith("exportar historial"):
                     guardar_historial_global()
                     print(_("🦤 Historial global exportado a historial_global.json"))
                     continue
 
-                if analizar_intencion(mensaje) == "websearch":
-                    try:
-                        resultado = plugin_manager.ejecutar_plugin("websearch_plugin", mensaje)
-                        print(_("🦤 Resultado búsqueda web:\n{}").format(resultado))
-                    except Exception as e:
-                        print(f"Error en búsqueda web: {e}")
-                    continue
+                # Plugin functionality removed  
+                print(_("⚠️ Búsqueda web no disponible (plugin removido)"))
+                continue
 
                 # --- Consulta general de memoria antes de generar la respuesta ---
                 try:
@@ -537,7 +415,6 @@ def main():
                         entrada = {
                             "usuario": "Maikeiru",
                             "mensaje": mensaje,
-                            "personaje_activo": personaje_activo.nombre if personaje_activo else None,
                             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             "id_sesion": id_sesion,
                             "respuesta": respuesta_memoria,
@@ -554,7 +431,6 @@ def main():
                 entrada = {
                     "usuario": "Maikeiru",
                     "mensaje": mensaje,
-                    "personaje_activo": personaje_activo.nombre if personaje_activo else None,
                     "timestamp": tiempo,
                     "id_sesion": id_sesion
                 }
@@ -584,26 +460,20 @@ def main():
                         metodo_usado = f"cache_{tipo_cache}"
                     else:
                         # ----------- Conversación normal -----------
-                        if personaje_activo:
-                            # 🔥 FIX: usar mensaje_limpio en lugar de pregunta_final
-                            respuesta = personaje_activo.generar_respuesta(mensaje_limpio, llama3_query)
-                            metodo_usado = "PersonajeIA"
-                            tokens_usados = 0
+                        resultado = sistema_hibrido.generar_respuesta_optimizada(pregunta_final)
+                        
+                        # Manejar correctamente tuplas/strings
+                        if isinstance(resultado, tuple) and len(resultado) == 2:
+                            respuesta, tokens_usados = resultado
+                        elif isinstance(resultado, str):
+                            respuesta = resultado
+                            tokens_usados = 0  # Llama3 local
                         else:
-                            resultado = sistema_hibrido.generar_respuesta_optimizada(pregunta_final)
-                            
-                            # Manejar correctamente tuplas/strings
-                            if isinstance(resultado, tuple) and len(resultado) == 2:
-                                respuesta, tokens_usados = resultado
-                            elif isinstance(resultado, str):
-                                respuesta = resultado
-                                tokens_usados = 0  # Llama3 local
-                            else:
-                                print("⚠️ Error en respuesta del sistema, usando respaldo")
-                                respuesta = "Como DODONEST, necesito más información para responder adecuadamente."
-                                tokens_usados = 0
-                            
-                            metodo_usado = "hibrido_optimizado"
+                            print("⚠️ Error en respuesta del sistema, usando respaldo")
+                            respuesta = "Como DODONEST, necesito más información para responder adecuadamente."
+                            tokens_usados = 0
+                        
+                        metodo_usado = "hibrido_optimizado"
 
                         # Guarda la nueva respuesta en cache SOLO si es válida
                         if isinstance(respuesta, str) and len(respuesta.strip()) > 10 and "¿en qué puedo ayudarte?" not in respuesta.lower():
@@ -644,10 +514,7 @@ def main():
                     print(_("🦤 (ML: {})").format(e))
 
                 # Imprime la respuesta
-                if personaje_activo:
-                    print("{}: {}".format(personaje_activo.nombre, respuesta))
-                else:
-                    print(_("🦤 DODONEST: {}").format(respuesta))
+                print(_("🦤 DODONEST: {}").format(respuesta))
 
                 try:
                     stats = sistema.get_stats()
