@@ -165,7 +165,7 @@ def calcular_stats_feedback(historial_global):
 
 def entrenar_ml_incremental():
     try:
-        from dodo_ml import DodoML
+        from ml import DodoML
         X_train = []
         y_train = []
         for entrada in historial_global:
@@ -329,7 +329,7 @@ def main():
                 # --- BENCHMARK AUTOMÁTICO ---
                 if mensaje.lower().strip() == "benchmark ml":
                     try:
-                        from dodo_ml import DodoML
+                        from ml import DodoML
                         X_test = []
                         y_test = []
                         for entrada in historial_global:
@@ -497,7 +497,7 @@ def main():
 
                 # --- PREDICCIÓN DE UTILIDAD ANTES DE MOSTRAR RESPUESTA ---
                 try:
-                    from dodo_ml import DodoML
+                    from ml import DodoML
                     modelo = DodoML()
                     if modelo.modelo_cargado():
                         texto_pred = f"{mensaje} {respuesta}"
