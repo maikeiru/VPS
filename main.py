@@ -267,21 +267,7 @@ def main():
                         print(f"Error mostrando stats: {e}")
                     continue
 
-                # Narrative system removed
-                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
-                continue
-
-                # Narrative system removed
-                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
-                continue
-
-                # Narrative system removed
-                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
-                continue
-
-                # Narrative system removed
-                print(_("⚠️ Sistema de narrativa no disponible (removido)"))
-                continue
+                # ...el resto del código sigue igual...
 
                 # --- FEEDBACK HUMANO ---
                 if mensaje.strip() in ["👍", "👎"]:
@@ -348,17 +334,7 @@ def main():
                         print(_("🦤 Error en benchmark ML: {}").format(e))
                     continue
 
-                # Plugin functionality removed
-                print(_("⚠️ Análisis de imagen no disponible (plugin removido)"))
-                continue
-
-                # Plugin functionality removed
-                print(_("⚠️ Gestión de plugins no disponible (plugin removido)"))
-                continue
-
-                # Plugin functionality removed
-                print(_("⚠️ Gestión de plugins no disponible (plugin removido)"))
-                continue
+                # ...el resto del código sigue igual...
 
                 if mensaje.strip().lower() in ["salir", "exit", "quit"]:
                     print(_("🦤 Saliendo de DODONEST..."))
@@ -369,42 +345,13 @@ def main():
                     mostrar_ayuda()
                     continue
 
-                # Character system removed
-                print(_("⚠️ Sistema de personajes no disponible (removido)"))
-                continue
-
-                # Character system removed
-                print(_("⚠️ Sistema de personajes no disponible (removido)"))
-                continue
-
-                # Character system removed
-                print(_("⚠️ Sistema de personajes no disponible (removido)"))
-                continue
-
-                # Character system removed
-                print(_("⚠️ Sistema de personajes no disponible (removido)"))
-                continue
-
-                # Character system removed
-                print(_("⚠️ Sistema de personajes no disponible (removido)"))
-                continue
-
-                # Plugin functionality removed
-                print(_("⚠️ Función de resumen no disponible (plugin removido)"))
-                continue
-
-                # Character system removed
-                print(_("⚠️ Sistema de personajes no disponible (removido)"))
-                continue
 
                 if mensaje.lower().startswith("exportar historial"):
                     guardar_historial_global()
                     print(_("🦤 Historial global exportado a historial_global.json"))
                     continue
 
-                # Plugin functionality removed  
-                print(_("⚠️ Búsqueda web no disponible (plugin removido)"))
-                continue
+                # ...el resto del código sigue igual...
 
                 # --- Consulta general de memoria antes de generar la respuesta ---
                 try:
@@ -562,3 +509,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
